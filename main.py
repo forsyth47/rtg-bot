@@ -7,6 +7,7 @@ from webserver import keep_alive
 import keys
 import pytz
 import subprocess
+import inspect
 #-----------------------------------
 print('Starting up bot...')
 
