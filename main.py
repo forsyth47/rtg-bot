@@ -24,67 +24,39 @@ def help_command(update, context):
   update.message.reply_text('PM @JoshuaForsyth for help!')
 
 
-# Secret command to access linux terminal (such as log.txt)
-def com(update, context):
-  global chat_id
-  comtext = str(update.message.text).lower()
-  comtext = comtext[4:]
-  comout = subprocess.check_output(comtext, shell=True)
-  comout = comout.decode("utf-8")
+def command(update, context):
   chat_id = update.message.chat_id
-  context.bot.send_message(chat_id, comout)
-  
+  if str(update.message.chat.username).lower() == str(keys.admin_username).lower():
+    inputtext=str(update.message.text)[3:]
+    if len(inputtext) != 0:
+        context.bot.send_message(chat_id, text=(subprocess.check_output(inputtext, shell=True)).decode("utf-8"))
+    else:
+      context.bot.send_message(chat_id, "*Send a UNIX/Windows machine command in this format:* \n \n       `/c \\<Your command here\\!\\>` \n \n*Example: '`/c tail log\\.txt`' \n\\(Grabs log\\.txt contexts for UNIX machines\\)*", parse_mode='MarkdownV2')
+  else:
+    context.bot.send_message(chat_id, "Sorry! Only the owner has permission to use this command!\n\n <b>Host your own bot to use this command :D</b>", parse_mode="html", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Host your own bot! 🤖", url='https://github.com/forsyth47/telegram-betterflix-bot')]]))
 
-def handle_response(new_text, update, context):
-  global chat_id
-  chat_id = update.message.chat_id
-  if 'hello' in new_text:
-    context.bot.send_chat_action(chat_id, action=ChatAction.TYPING)
-    return 'Hello! :)'
-  # If Asked anything else
-  context.bot.send_chat_action(chat_id, action=ChatAction.TYPING)
-  return ("I'm not programmed to answer that yet ;0" + '\n')
+
+
+def handle_response(text, update, context):
+  dt = datetime.now(pytz.timezone("Asia/Kolkata")).strftime("%Y%m%d-%H%M%S")
+  text = "+++\n+++\n### {} ###\n\n## ~{} ##".format(text, dt)
+  with open ('kawagi/content/thots/' + dt + '.md','w') as f:
+    f.write(text)
+  subprocess.run("bash kawagi/repl-push", shell=True)
 
 
 def handle_message(update, context):
-  # Get basic info of the incoming message
-  message_type = update.message.chat.type
-  text = str(update.message.text).lower()
-  response = ''
-
-  timezonex = datetime.now(pytz.timezone("Asia/Kolkata"))
-  # Print a log for debugging
-  logx = (
-    timezonex.strftime("[%d/%m/%Y %H:%M:%S] "),
-    f'User ({update.message.chat.first_name}, {update.message.chat.username}, {update.message.chat.id}) says: "{text}" in: {message_type}'
-  )
-  print(logx)
-
-  # React to group messages only if users mention the bot directly
-  if message_type == 'group':
-    # Replace with your bot username
-    botnamex = "@BOTNAMEHERE"
-    if botnamex in text:
-      new_text = text.replace(botnamex, '').strip()
-      response = handle_response(new_text)
-  else:
-    response = handle_response(new_text, update, context)
-
-  # Reply normal if the message is in private
-  update.message.reply_text(response)
-
-  #print log in file.
-  fileout = open("log.txt", "a+")
-  fileout.writelines(logsss)
-  fileout.writelines("\n")
-  fileout.close()
+  text = str(update.message.text)
+  if update.message.chat_id == keys.chatid:
+    handle_response(text, update, context)
+    update.message.reply_text("Thot Published to the site.")
 
 
 # Log errors
 def error(update, context):
   nowx = datetime.now(pytz.timezone("Asia/Kolkata"))
   global errorout
-  errorout = (nowx.strftime("[%d/%m/%Y %H:%M:%S] "), f'Update {update} caused error {context.error}')
+  errorout = (datetime.now(pytz.timezone("Asia/Kolkata")).strftime("[%d/%m/%Y %H:%M:%S] "), f'Update {update} caused error {context.error}')
   print(errorout)
 
 
@@ -96,7 +68,7 @@ if __name__ == '__main__':
   # Commands
   dp.add_handler(CommandHandler('start', start_command))
   dp.add_handler(CommandHandler('help', help_command))
-  dp.add_handler(CommandHandler('com', com))
+  dp.add_handler(CommandHandler('c', command))
   #dp.add_handler(CommandHandler('command-in-tg', fun-name))
 
   # Messages
