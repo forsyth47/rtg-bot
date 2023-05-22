@@ -25,14 +25,17 @@ def help_command(update, context):
 
 
 # Secret command to access linux terminal (such as log.txt)
-def com(update, context):
-  global chat_id
-  comtext = str(update.message.text).lower()
-  comtext = comtext[4:]
-  comout = subprocess.check_output(comtext, shell=True)
-  comout = comout.decode("utf-8")
+def command(update, context):
   chat_id = update.message.chat_id
-  context.bot.send_message(chat_id, comout)
+  if str(update.message.chat.username).lower() == str(keys.admin_username).lower():
+    inputtext=str(update.message.text)[3:]
+    if len(inputtext) != 0:
+        context.bot.send_message(chat_id, text=(subprocess.check_output(inputtext, shell=True)).decode("utf-8"))
+    else:
+      context.bot.send_message(chat_id, "*Send a UNIX/Windows machine command in this format:* \n \n       `/c \\<Your command here\\!\\>` \n \n*Example: '`/c tail log\\.txt`' \n\\(Grabs log\\.txt contexts for UNIX machines\\)*", parse_mode='MarkdownV2')
+  else:
+    context.bot.send_message(chat_id, "Sorry! Only the owner has permission to use this command!\n\n <b>Host your own bot to use this command :D</b>", parse_mode="html", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Host your own bot! 🤖", url='https://github.com/forsyth47/telegram-betterflix-bot')]]))
+
   
 
 def handle_response(new_text, update, context):
@@ -96,7 +99,7 @@ if __name__ == '__main__':
   # Commands
   dp.add_handler(CommandHandler('start', start_command))
   dp.add_handler(CommandHandler('help', help_command))
-  dp.add_handler(CommandHandler('com', com))
+  dp.add_handler(CommandHandler('c', command))
   #dp.add_handler(CommandHandler('command-in-tg', fun-name))
 
   # Messages
