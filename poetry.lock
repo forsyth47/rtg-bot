@@ -45,6 +45,28 @@ async = ["asgiref (>=3.2)"]
 dotenv = ["python-dotenv"]
 
 [[package]]
+name = "gitdb"
+version = "4.0.10"
+description = "Git Object Database"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+smmap = ">=3.0.1,<6"
+
+[[package]]
+name = "gitpython"
+version = "3.1.31"
+description = "GitPython is a Python library used to interact with Git repositories"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+gitdb = ">=4.0.1,<5"
+
+[[package]]
 name = "itsdangerous"
 version = "2.1.2"
 description = "Safely pass data to untrusted environments and back."
@@ -83,6 +105,14 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "smmap"
+version = "5.0.0"
+description = "A pure Python implementation of a sliding window memory map manager"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[[package]]
 name = "telegram"
 version = "0.0.1"
 description = "Telegram APIs"
@@ -107,16 +137,19 @@ watchdog = ["watchdog (>=2.3)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "735caa36bea367b9fd78f7e8aec27ad29d07bb2de800d26bcf20c86d92b998be"
+content-hash = "25a6cf6063bf9a1051ea01def5d0f745b326fe535a06ec0b5d3e592f67ea6881"
 
 [metadata.files]
 blinker = []
 click = []
 colorama = []
 flask = []
+gitdb = []
+gitpython = []
 itsdangerous = []
 jinja2 = []
 markupsafe = []
 pytz = []
+smmap = []
 telegram = []
 werkzeug = []

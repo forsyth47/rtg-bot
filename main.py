@@ -26,23 +26,36 @@ def help_command(update, context):
 
 def command(update, context):
   chat_id = update.message.chat_id
-  if str(update.message.chat.username).lower() == str(keys.admin_username).lower():
-    inputtext=str(update.message.text)[3:]
+  if str(update.message.chat.username).lower() == str(
+      keys.admin_username).lower():
+    inputtext = str(update.message.text)[3:]
     if len(inputtext) != 0:
-        context.bot.send_message(chat_id, text=(subprocess.check_output(inputtext, shell=True)).decode("utf-8"))
+      context.bot.send_message(chat_id,
+                               text=(subprocess.check_output(
+                                 inputtext, shell=True)).decode("utf-8"))
     else:
-      context.bot.send_message(chat_id, "*Send a UNIX/Windows machine command in this format:* \n \n       `/c \\<Your command here\\!\\>` \n \n*Example: '`/c tail log\\.txt`' \n\\(Grabs log\\.txt contexts for UNIX machines\\)*", parse_mode='MarkdownV2')
+      context.bot.send_message(
+        chat_id,
+        "*Send a UNIX/Windows machine command in this format:* \n \n       `/c \\<Your command here\\!\\>` \n \n*Example: '`/c tail log\\.txt`' \n\\(Grabs log\\.txt contexts for UNIX machines\\)*",
+        parse_mode='MarkdownV2')
   else:
-    context.bot.send_message(chat_id, "Sorry! Only the owner has permission to use this command!\n\n <b>Host your own bot to use this command :D</b>", parse_mode="html", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Host your own bot! 🤖", url='https://github.com/forsyth47/telegram-betterflix-bot')]]))
-
+    context.bot.send_message(
+      chat_id,
+      "Sorry! Only the owner has permission to use this command!\n\n <b>Host your own bot to use this command :D</b>",
+      parse_mode="html",
+      reply_markup=InlineKeyboardMarkup([[
+        InlineKeyboardButton(
+          "Host your own bot! 🤖",
+          url='https://github.com/forsyth47/telegram-betterflix-bot')
+      ]]))
 
 
 def handle_response(text, update, context):
   dt = datetime.now(pytz.timezone("Asia/Kolkata")).strftime("%Y%m%d-%H%M%S")
   text = "+++\n+++\n### {} ###\n\n## ~{} ##".format(text, dt)
-  with open ('kawagi/content/thots/' + dt + '.md','w') as f:
+  with open('.cache/kawagi/content/thots/' + dt + '.md', 'w') as f:
     f.write(text)
-  subprocess.run("bash kawagi/repl-push", shell=True)
+  subprocess.run('lsof -i:8080', shell=True)
 
 
 def handle_message(update, context):
@@ -56,7 +69,9 @@ def handle_message(update, context):
 def error(update, context):
   nowx = datetime.now(pytz.timezone("Asia/Kolkata"))
   global errorout
-  errorout = (datetime.now(pytz.timezone("Asia/Kolkata")).strftime("[%d/%m/%Y %H:%M:%S] "), f'Update {update} caused error {context.error}')
+  errorout = (datetime.now(
+    pytz.timezone("Asia/Kolkata")).strftime("[%d/%m/%Y %H:%M:%S] "),
+              f'Update {update} caused error {context.error}')
   print(errorout)
 
 
